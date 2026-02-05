@@ -10,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AplicationDBContext>(opciones => 
-                opciones.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));
+                // opciones.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));
+                opciones.UseNpgsql(builder.Configuration.GetConnectionString("ConexionSql")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -33,7 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
