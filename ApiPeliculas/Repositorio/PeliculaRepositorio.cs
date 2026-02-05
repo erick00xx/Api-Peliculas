@@ -1,0 +1,77 @@
+﻿using ApiPeliculas.Data;
+using ApiPeliculas.Modelos;
+using ApiPeliculas.Repositorio.IRepositorio;
+
+namespace ApiPeliculas.Repositorio
+{
+    public class PeliculaRepositorio : IPeliculaRepositorio
+    {
+        private readonly AplicationDBContext _db;
+
+        public PeliculaRepositorio(AplicationDBContext db)
+        {
+            _db = db;
+        }
+
+        public bool ActualizarPelicula(Pelicula pelicula)
+        {
+            pelicula.FechaCreacion = DateTime.UtcNow;
+            _db.Peliculas.Update(pelicula);
+            return Guardar();
+        }
+
+        public bool BorrarPelicula(Pelicula pelicula)
+        {
+            _db.Peliculas.Remove(pelicula);
+            return Guardar();
+        }
+
+        public IEnumerable<Pelicula> BuscarPelicula(string nombre)
+        {
+            IQueryable<Pelicula> query = _db.Peliculas;
+            if(!string.IsNullOrEmpty(nombre))
+            {
+                query = query.Where(e => e.Nombre.Contains(nombre) || e.Descripcion.Contains(nombre));
+            }
+            return query.ToList();
+        }
+
+        public bool CrearPelicula(Pelicula pelicula)
+        {
+            pelicula.FechaCreacion = DateTime.UtcNow;
+            _db.Peliculas.Add(pelicula);
+            return Guardar();
+        }
+
+        public bool ExistePelicula(int id)
+        {
+            return _db.Peliculas.Any(c => c.Id == id);
+        }
+
+        public bool ExistePelicula(string nombre)
+        {
+            bool valor = _db.Peliculas.Any(c => c.Nombre.ToLower().Trim() == nombre.ToLower().Trim());
+            return valor;
+        }
+
+        public Pelicula GetPelicula(int PeliculaId)
+        {
+            return _db.Peliculas.FirstOrDefault(c => c.Id == PeliculaId);
+        }
+
+        public ICollection<Pelicula> GetPeliculas()
+        {
+            return _db.Peliculas.OrderBy(c => c.Nombre).ToList();
+        }
+
+        public ICollection<Pelicula> GetPeliculasEnCategoria(int catId)
+        {
+            return _db.Peliculas.Where(c => c.categoriaId == catId).ToList();
+        }
+
+        public bool Guardar()
+        {
+            return _db.SaveChanges() >= 0 ? true : false;
+        }
+    }
+}
