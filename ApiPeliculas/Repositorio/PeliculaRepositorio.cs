@@ -16,7 +16,17 @@ namespace ApiPeliculas.Repositorio
         public bool ActualizarPelicula(Pelicula pelicula)
         {
             pelicula.FechaCreacion = DateTime.UtcNow;
-            _db.Peliculas.Update(pelicula);
+
+            //Arreglar problema con PUT
+            var peliculaExistente = _db.Peliculas.Find(pelicula.Id);
+            if (peliculaExistente != null)
+            {
+                _db.Entry(peliculaExistente).CurrentValues.SetValues(pelicula);
+            }
+            else
+            {
+                _db.Peliculas.Update(pelicula);
+            }
             return Guardar();
         }
 
