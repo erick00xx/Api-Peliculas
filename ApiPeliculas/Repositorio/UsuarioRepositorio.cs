@@ -60,7 +60,7 @@ namespace ApiPeliculas.Repositorio
                     Usuario = null
                 };
             }
-            // Aqui existe el usuario entonces podemos provesar el login
+            // Aqui existe el usuario entonces podemos procesar el login
             var manejadoToken = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(claveSecreta);
 

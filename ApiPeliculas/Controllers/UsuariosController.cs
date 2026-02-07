@@ -94,7 +94,7 @@ namespace ApiPeliculas.Controllers
         public async Task<IActionResult> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
         {
 
-            var respuestaLogin = await _usRepo.Login(usuarioLoginDto);
+            UsuarioLoginRespuestaDto respuestaLogin = await _usRepo.Login(usuarioLoginDto);
 
 
             if (respuestaLogin.Usuario == null || string.IsNullOrEmpty(respuestaLogin.Token))
@@ -108,7 +108,7 @@ namespace ApiPeliculas.Controllers
                 _respuestaApi.StatusCode = HttpStatusCode.OK;
                 _respuestaApi.IsSuccess = true;
                 _respuestaApi.Result = respuestaLogin;
-                return BadRequest(_respuestaApi);
+                return Ok(_respuestaApi);
 
         }
 
