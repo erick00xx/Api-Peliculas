@@ -5,6 +5,7 @@ using ApiPeliculas.Data;
 using ApiPeliculas.Modelos;
 using ApiPeliculas.Modelos.Dtos;
 using ApiPeliculas.Repositorio.IRepositorio;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using XSystem.Security.Cryptography;
@@ -32,6 +33,7 @@ namespace ApiPeliculas.Repositorio
             return _db.Usuario.OrderBy(c => c.NombreUsuario).ToList();
         }
 
+        // regresar true si no existe usuario
         public bool IsUniqueUser(string nombre)
         {
             var usuarioExistente = _db.Usuario.FirstOrDefault(u => u.NombreUsuario.ToLower() == nombre.ToLower());
@@ -74,7 +76,7 @@ namespace ApiPeliculas.Repositorio
             };
             var token = manejadoToken.CreateToken(tokenDescriptor);
             return new UsuarioLoginRespuestaDto()
-            {
+            {   
                 Token = manejadoToken.WriteToken(token),
                 Usuario = usuario
             };
