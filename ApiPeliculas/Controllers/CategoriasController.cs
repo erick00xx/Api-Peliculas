@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiPeliculas.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
+    // [ResponseCache(Duration = 20)] //PARA EL CACHE
     [Route("api/[controller]")]
     [ApiController]
     //[EnableCors("PoliticaCors")]
@@ -26,6 +27,7 @@ namespace ApiPeliculas.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        [ResponseCache(Duration = 20)] //CACHEADO
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -44,6 +46,8 @@ namespace ApiPeliculas.Controllers
         }
 
         [AllowAnonymous]
+        // [ResponseCache(Duration = 20)] //CACHEADO , Y SOLO CACHEA EL ID NUEVO
+        [ResponseCache(Location =ResponseCacheLocation.None, NoStore =true)]  //que no se guarde ni en cliente ni en servidor la rspta.
         [HttpGet("{categoriaId:int}", Name = "GetCategoria")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
