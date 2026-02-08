@@ -27,7 +27,8 @@ namespace ApiPeliculas.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        [ResponseCache(Duration = 20)] //CACHEADO
+        // [ResponseCache(Duration = 20)] //CACHEADO
+        [ResponseCache(CacheProfileName = "PorDefecto30Segundos")] // Aplciar el cache global
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

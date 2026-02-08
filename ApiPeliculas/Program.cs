@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,11 @@ builder.Services.AddDbContext<AplicationDBContext>(opciones =>
                 // opciones.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSql")));
                 opciones.UseNpgsql(builder.Configuration.GetConnectionString("ConexionSql")));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(option =>
+{
+    //CACHE profile . Una cache global y asi no tener que ponerlo en todas partes
+    option.CacheProfiles.Add("PorDefecto30Segundos", new CacheProfile(){ Duration = 30});
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
