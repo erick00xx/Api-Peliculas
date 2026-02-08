@@ -3,6 +3,7 @@ using ApiPeliculas.Modelos;
 using ApiPeliculas.Modelos.Dtos;
 using ApiPeliculas.Repositorio.IRepositorio;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,8 @@ namespace ApiPeliculas.Controllers
             this._respuestaApi = new();
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -39,6 +42,7 @@ namespace ApiPeliculas.Controllers
             return Ok(listaUsuariosDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{usuarioId:int}", Name = "GetUsuario")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -57,6 +61,7 @@ namespace ApiPeliculas.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpPost("registro")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -73,7 +78,7 @@ namespace ApiPeliculas.Controllers
             }
 
             var usuario = await _usRepo.Registro(usuarioRegistroDto);
-            if(usuario == null)
+            if (usuario == null)
             {
                 _respuestaApi.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 _respuestaApi.IsSuccess = false;
@@ -87,6 +92,7 @@ namespace ApiPeliculas.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -105,10 +111,10 @@ namespace ApiPeliculas.Controllers
                 return BadRequest(_respuestaApi);
             }
 
-                _respuestaApi.StatusCode = HttpStatusCode.OK;
-                _respuestaApi.IsSuccess = true;
-                _respuestaApi.Result = respuestaLogin;
-                return Ok(_respuestaApi);
+            _respuestaApi.StatusCode = HttpStatusCode.OK;
+            _respuestaApi.IsSuccess = true;
+            _respuestaApi.Result = respuestaLogin;
+            return Ok(_respuestaApi);
 
         }
 

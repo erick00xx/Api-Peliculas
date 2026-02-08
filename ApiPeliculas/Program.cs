@@ -5,6 +5,9 @@ using ApiPeliculas.Repositorio.IRepositorio;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using ApiPeliculas;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +44,32 @@ builder.Services.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
 builder.Services.AddScoped<IPeliculaRepositorio, PeliculaRepositorio>();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 
+var key = builder.Configuration.GetValue<string>("ApiSettings:Secreta");
+
+
 //agregar el automapper
 builder.Services.AddAutoMapper(typeof(PeliculasMapper));
+
+//Aqui se configura la autenticacion
+builder.Services.AddAuthentication
+(
+    x =>
+    {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }
+).AddJwtBearer(x=>
+{
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = true;
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
 
 var app = builder.Build();
 
@@ -55,10 +82,12 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
+//Soporte para Autenticacion (ORDEN IMPORTANTE, primero autentica, luego autoriza)
+app.UseAuthentication();
 app.UseAuthorization();
 
 //Soporte para CORS
-app.UseCors("PoiticaCors");
+app.UseCors("PoliticaCors");
 
 app.MapControllers();
 
