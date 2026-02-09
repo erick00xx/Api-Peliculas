@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiPeliculas.Controllers
+namespace ApiPeliculas.Controllers.V1
 {
     // [Authorize(Roles = "Admin")]
     // [ResponseCache(Duration = 20)] //PARA EL CACHE
@@ -16,14 +16,13 @@ namespace ApiPeliculas.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     //[EnableCors("PoliticaCors")]
-    [ApiVersion("1.0")]
-    [ApiVersion("2.0")] //IMPORTANTE PARA USAR EL MapToApiVersion
-    public class CategoriasController : ControllerBase
+    [ApiVersion("1.0")]//IMPORTANTE PARA USAR EL MapToApiVersion
+    public class CategoriasV1Controller : ControllerBase
     {
 
         private readonly IMapper _mapper;
         private readonly ICategoriaRepositorio _catRepo;
-        public CategoriasController(ICategoriaRepositorio catRepo, IMapper mapper)
+        public CategoriasV1Controller(ICategoriaRepositorio catRepo, IMapper mapper)
         {
             _mapper = mapper;
             _catRepo = catRepo;
@@ -31,7 +30,7 @@ namespace ApiPeliculas.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        [MapToApiVersion("1.0")]
+        // [MapToApiVersion("1.0")]
         // [ResponseCache(Duration = 20)] //CACHEADO
         [ResponseCache(CacheProfileName = "PorDefecto30Segundos")] // Aplciar el cache global
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -52,15 +51,6 @@ namespace ApiPeliculas.Controllers
             }
             return Ok(listaCategoriasDto);
         }
-
-        [HttpGet]
-        [MapToApiVersion("2.0")]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "valor1", "valor2", "valor3"};
-        }
-
-
 
 
         [AllowAnonymous]
