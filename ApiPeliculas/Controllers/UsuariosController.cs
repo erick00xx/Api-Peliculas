@@ -2,14 +2,18 @@
 using ApiPeliculas.Modelos;
 using ApiPeliculas.Modelos.Dtos;
 using ApiPeliculas.Repositorio.IRepositorio;
+using Asp.Versioning;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiPeliculas.Controllers
+namespace ApiPeliculas.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiController]
+    // [ApiVersion("1.0")]
+    [ApiVersionNeutral] //CONTROLADOR QUE NUNCA CAMBIARA Y ESTARA EN TODAS LAS VERSIONES
     public class UsuariosController : ControllerBase
     {
 
@@ -23,6 +27,8 @@ namespace ApiPeliculas.Controllers
             this._respuestaApi = new();
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -39,6 +45,7 @@ namespace ApiPeliculas.Controllers
             return Ok(listaUsuariosDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{usuarioId:int}", Name = "GetUsuario")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -57,6 +64,7 @@ namespace ApiPeliculas.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpPost("registro")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -73,7 +81,7 @@ namespace ApiPeliculas.Controllers
             }
 
             var usuario = await _usRepo.Registro(usuarioRegistroDto);
-            if(usuario == null)
+            if (usuario == null)
             {
                 _respuestaApi.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 _respuestaApi.IsSuccess = false;
@@ -87,6 +95,7 @@ namespace ApiPeliculas.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -94,7 +103,7 @@ namespace ApiPeliculas.Controllers
         public async Task<IActionResult> Login([FromBody] UsuarioLoginDto usuarioLoginDto)
         {
 
-            var respuestaLogin = await _usRepo.Login(usuarioLoginDto);
+            UsuarioLoginRespuestaDto respuestaLogin = await _usRepo.Login(usuarioLoginDto);
 
 
             if (respuestaLogin.Usuario == null || string.IsNullOrEmpty(respuestaLogin.Token))
@@ -105,10 +114,10 @@ namespace ApiPeliculas.Controllers
                 return BadRequest(_respuestaApi);
             }
 
-                _respuestaApi.StatusCode = HttpStatusCode.OK;
-                _respuestaApi.IsSuccess = true;
-                _respuestaApi.Result = respuestaLogin;
-                return BadRequest(_respuestaApi);
+            _respuestaApi.StatusCode = HttpStatusCode.OK;
+            _respuestaApi.IsSuccess = true;
+            _respuestaApi.Result = respuestaLogin;
+            return Ok(_respuestaApi);
 
         }
 
