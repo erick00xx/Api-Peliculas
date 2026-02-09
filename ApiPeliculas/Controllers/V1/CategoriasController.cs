@@ -16,13 +16,18 @@ namespace ApiPeliculas.Controllers.V1
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     //[EnableCors("PoliticaCors")]
-    [ApiVersion("1.0")]//IMPORTANTE PARA USAR EL MapToApiVersion
-    public class CategoriasV1Controller : ControllerBase
+    [ApiVersion("1.0", Deprecated = true)]
+    // [Obsolete("Esta version del controlador esta obsoleta")]
+    // [ApiVersion("1.0", Deprecated = true)]//IMPORTANTE PARA USAR EL MapToApiVersion
+    // [ApiVersion("2.0", Deprecated = true)]//IMPORTANTE PARA USAR EL MapToApiVersion
+
+    
+    public class CategoriasController : ControllerBase
     {
 
         private readonly IMapper _mapper;
         private readonly ICategoriaRepositorio _catRepo;
-        public CategoriasV1Controller(ICategoriaRepositorio catRepo, IMapper mapper)
+        public CategoriasController(ICategoriaRepositorio catRepo, IMapper mapper)
         {
             _mapper = mapper;
             _catRepo = catRepo;
@@ -39,6 +44,7 @@ namespace ApiPeliculas.Controllers.V1
         //[EnableCors("PoliticaCors")] // Aplica la politica ros a este metodo
         // [ApiVersion("1.0")]
         // [ApiVersion("2.0")]
+        [Obsolete("Esta version del endpoint esta obsoleta")]
         public IActionResult GetCategorias()
         {
             var listaCategorias = _catRepo.GetCategorias();

@@ -17,12 +17,12 @@ namespace ApiPeliculas.Controllers.V2
     [ApiController]
     //[EnableCors("PoliticaCors")]
     [ApiVersion("2.0")] 
-    public class CategoriasV2Controller : ControllerBase
+    public class CategoriasController : ControllerBase
     {
 
         private readonly IMapper _mapper;
         private readonly ICategoriaRepositorio _catRepo;
-        public CategoriasV2Controller(ICategoriaRepositorio catRepo, IMapper mapper)
+        public CategoriasController(ICategoriaRepositorio catRepo, IMapper mapper)
         {
             _mapper = mapper;
             _catRepo = catRepo;
