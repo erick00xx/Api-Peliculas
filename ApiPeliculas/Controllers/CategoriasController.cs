@@ -12,9 +12,12 @@ namespace ApiPeliculas.Controllers
 {
     // [Authorize(Roles = "Admin")]
     // [ResponseCache(Duration = 20)] //PARA EL CACHE
-    [Route("api/[controller]")]
+    // [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     //[EnableCors("PoliticaCors")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")] //IMPORTANTE PARA USAR EL MapToApiVersion
     public class CategoriasController : ControllerBase
     {
 
@@ -28,13 +31,15 @@ namespace ApiPeliculas.Controllers
 
         [AllowAnonymous]
         [HttpGet]
+        [MapToApiVersion("1.0")]
         // [ResponseCache(Duration = 20)] //CACHEADO
         [ResponseCache(CacheProfileName = "PorDefecto30Segundos")] // Aplciar el cache global
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         //[EnableCors("PoliticaCors")] // Aplica la politica ros a este metodo
-        [ApiVersion("1.0")]
+        // [ApiVersion("1.0")]
+        // [ApiVersion("2.0")]
         public IActionResult GetCategorias()
         {
             var listaCategorias = _catRepo.GetCategorias();
@@ -47,6 +52,16 @@ namespace ApiPeliculas.Controllers
             }
             return Ok(listaCategoriasDto);
         }
+
+        [HttpGet]
+        [MapToApiVersion("2.0")]
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "valor1", "valor2", "valor3"};
+        }
+
+
+
 
         [AllowAnonymous]
         // [ResponseCache(Duration = 20)] //CACHEADO , Y SOLO CACHEA EL ID NUEVO

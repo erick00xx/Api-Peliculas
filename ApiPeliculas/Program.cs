@@ -41,22 +41,60 @@ builder.Services.AddSwaggerGen(options =>
             }
         ); 
         options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            {
                 {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
                         },
-                        Scheme = "oauth2",
-                        Name = "Bearer",
-                        In = ParameterLocation.Header
-                    },
-                    new List<string>()
+                        new List<string>()
+                    }
+                }
+            );
+        options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Version = "v1.0",
+                Title = "PeliculasApi V1",
+                Description = "Api de Peliculas",
+                TermsOfService = new Uri("https://youtube.com"),
+                Contact = new OpenApiContact
+                {
+                    Name = "erick",
+                    Url = new Uri("https://youtube.com")
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "Licencia Personal",
+                    Url = new Uri("https://youtube.com")
                 }
             }
+            
+
+            );
+        options.SwaggerDoc("v2", new OpenApiInfo
+        {
+            Version = "v2.0",
+            Title = "PeliculasApi V2",
+            Description = "Api de Peliculas",
+            TermsOfService = new Uri("https://youtube.com"),
+            Contact = new OpenApiContact
+            {
+                Name = "erick",
+                Url = new Uri("https://youtube.com")
+            },
+            License = new OpenApiLicense
+            {
+                Name = "Licencia Personal",
+                Url = new Uri("https://youtube.com")
+            }
+        }
         );
     }
 );
@@ -94,15 +132,16 @@ var apiVersioningBuilder = builder.Services.AddApiVersioning(option =>
     option.AssumeDefaultVersionWhenUnspecified = true;
     option.DefaultApiVersion = new ApiVersion(1,0);
     option.ReportApiVersions = true;
-    option.ApiVersionReader = ApiVersionReader.Combine(
-        new QueryStringApiVersionReader("api-version")//?api-version=1.0
-    );
+    // option.ApiVersionReader = ApiVersionReader.Combine(
+    //     new QueryStringApiVersionReader("api-version")//?api-version=1.0
+    // );
 });
 
 apiVersioningBuilder.AddApiExplorer(
     options =>
     {
         options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true; //para parametrizar de otra forma la verion, ya no query
     }
 );
 
@@ -137,7 +176,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiPeliculasV1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "ApiPeliculasV2");
+    });
 }
 
 // app.UseHttpsRedirection();
