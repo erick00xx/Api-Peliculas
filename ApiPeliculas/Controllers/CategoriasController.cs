@@ -1,6 +1,7 @@
 ﻿using ApiPeliculas.Modelos;
 using ApiPeliculas.Modelos.Dtos;
 using ApiPeliculas.Repositorio.IRepositorio;
+using Asp.Versioning;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -33,6 +34,7 @@ namespace ApiPeliculas.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         //[EnableCors("PoliticaCors")] // Aplica la politica ros a este metodo
+        [ApiVersion("1.0")]
         public IActionResult GetCategorias()
         {
             var listaCategorias = _catRepo.GetCategorias();

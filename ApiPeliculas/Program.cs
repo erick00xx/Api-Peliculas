@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +86,25 @@ builder.Services.AddScoped<IPeliculaRepositorio, PeliculaRepositorio>();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secreta");
+
+
+//Soporte para versiones API
+var apiVersioningBuilder = builder.Services.AddApiVersioning(option =>
+{
+    option.AssumeDefaultVersionWhenUnspecified = true;
+    option.DefaultApiVersion = new ApiVersion(1,0);
+    option.ReportApiVersions = true;
+    option.ApiVersionReader = ApiVersionReader.Combine(
+        new QueryStringApiVersionReader("api-version")//?api-version=1.0
+    );
+});
+
+apiVersioningBuilder.AddApiExplorer(
+    options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+    }
+);
 
 
 //agregar el automapper
